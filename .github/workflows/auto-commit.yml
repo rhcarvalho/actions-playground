@@ -21,9 +21,10 @@ jobs:
         run: |
           echo $EVENT_CONTEXT
       - uses: "actions/checkout@v3"
-      - run: "git config -l"
-      - run: |
-          export GIT_AUTHOR_NAME="$(gh api users/${GH_SENDER_LOGIN} --jq '.name')"
+      - name: "commit"
+        run: |
+          # Try to get author name using GitHub API. If not set, use the GitHub login handle.
+          export GIT_AUTHOR_NAME="${$(gh api 'users/${GH_SENDER_LOGIN}' --jq '.name'):-${GH_SENDER_LOGIN}}"
           date > generated.txt
           git add .
           git commit -m "generated"
@@ -34,4 +35,3 @@ jobs:
           GIT_AUTHOR_EMAIL: "${{ github.event.sender.id }}+${{ github.event.sender.login }}@users.noreply.github.com"
           GIT_COMMITTER_NAME: "github-actions[bot]"
           GIT_COMMITTER_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
-      - run: "git config -l"

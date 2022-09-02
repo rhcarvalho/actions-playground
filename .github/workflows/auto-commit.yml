@@ -1,0 +1,20 @@
+name: "Commit"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+permissions:
+  contents: "write"
+defaults:
+  run:
+    shell: "bash"
+concurrency:
+  group: "update-${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  update:
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 5
+    steps:
+      - uses: "actions/checkout@v3"
+      - run: "git config -l"

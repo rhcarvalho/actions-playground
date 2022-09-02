@@ -29,7 +29,9 @@ jobs:
       - name: Commit changes
         run: |
           RELEASE_DATE="$(awk 'match($0, "^^#! date=(.+)$", m) {print m[1];exit}' cedict_1_0_ts_utf-8_mdbg.txt)"
-          git commit -m "CC-CEDICT ${RELEASE_DATE}" -- cedict_1_0_ts_utf-8_mdbg.txt
+          echo ${RELEASE_DATE}
+          git add -- cedict_1_0_ts_utf-8_mdbg.txt
+          git commit -m "CC-CEDICT ${RELEASE_DATE}"
       - name: Push
         run: |
           git push

@@ -1,8 +1,8 @@
 name: "Commit"
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 6 * * 1"
+#   schedule:
+#     - cron: "0 6 * * 1"
 permissions:
   contents: "write"
 defaults:
@@ -17,4 +17,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: "actions/checkout@v3"
+      - run: "git config -l"
+      - run: |
+          date > generated.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "generated"
+          git push
       - run: "git config -l"

@@ -1,8 +1,8 @@
 name: "Commit"
 on:
   workflow_dispatch:
-#   schedule:
-#     - cron: "0 6 * * 1"
+  schedule:
+    - cron: "0/5 * * * 5"
 permissions:
   contents: "write"
 defaults:

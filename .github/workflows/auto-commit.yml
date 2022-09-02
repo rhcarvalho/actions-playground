@@ -24,7 +24,12 @@ jobs:
       - name: "commit"
         run: |
           # Try to get author name using GitHub API. If not set, use the GitHub login handle.
-          export GIT_AUTHOR_NAME="${$(gh api 'users/${GH_SENDER_LOGIN}' --jq '.name'):-${GH_SENDER_LOGIN}}"
+          # Using a shell trick from https://unix.stackexchange.com/a/325768.
+          # In Zsh it could be more direct:
+          #   export GIT_AUTHOR_NAME="${$(gh api "users/${GH_SENDER_LOGIN}" --jq '.name'):-${GH_SENDER_LOGIN}}"
+          : "${GIT_AUTHOR_NAME:=$(gh api "users/${GH_SENDER_LOGIN}" --jq '.name')}" "${GIT_AUTHOR_NAME:=${GH_SENDER_LOGIN}}"
+          export GIT_AUTHOR_NAME
+
           date > generated.txt
           git add .
           git commit -m "generated"

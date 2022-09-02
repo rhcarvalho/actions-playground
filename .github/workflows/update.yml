@@ -1,0 +1,35 @@
+name: "Update CC-CEDICT"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "4/15 * * * *"
+permissions:
+  contents: "write"
+defaults:
+  run:
+    shell: "bash"
+concurrency:
+  group: "update-${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  update:
+    name: "Update CC-CEDICT"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 5
+    steps:
+      - uses: "actions/checkout@v3"
+      - name: Configure Git
+        run: |
+          git config user.name "Rodolfo Carvalho"
+          git config user.email "88819+rhcarvalho@users.noreply.github.com"
+      - name: Download and decompress
+        run: |
+          curl -sLO https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz
+          gzip -d cedict_1_0_ts_utf-8_mdbg.txt.gz
+      - name: Commit changes
+        run: |
+          RELEASE_DATE="$(awk 'match($0, "^^#! date=(.+)$", m) {print m[1];exit}' cedict_1_0_ts_utf-8_mdbg.txt)"
+          git commit -m "CC-CEDICT ${RELEASE_DATE}" -- cedict_1_0_ts_utf-8_mdbg.txt
+      - name: Push
+        run: |
+          git push

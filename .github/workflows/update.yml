@@ -25,7 +25,7 @@ jobs:
       - name: Download and decompress
         run: |
           curl -sLO https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz
-          gzip -d cedict_1_0_ts_utf-8_mdbg.txt.gz
+          gzip -df cedict_1_0_ts_utf-8_mdbg.txt.gz
       - name: Commit changes
         run: |
           RELEASE_DATE="$(awk 'match($0, "^^#! date=(.+)$", m) {print m[1];exit}' cedict_1_0_ts_utf-8_mdbg.txt)"

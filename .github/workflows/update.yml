@@ -1,6 +1,7 @@
 name: "Update CC-CEDICT"
 on:
   workflow_dispatch:
+  push:
   schedule:
     - cron: "4/15 * * * *"
 permissions:
@@ -18,20 +19,25 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: "actions/checkout@v3"
-      - name: Configure Git
+      - name: "Configure Git"
         run: |
           git config user.name "Rodolfo Carvalho"
           git config user.email "88819+rhcarvalho@users.noreply.github.com"
-      - name: Download and decompress
+      - name: "Download"
         run: |
-          curl -sLO https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz
-          gzip -df cedict_1_0_ts_utf-8_mdbg.txt.gz
-      - name: Commit changes
+          URL='https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz'
+          curl -L ${URL} | gunzip > cedict_1_0_ts_utf-8_mdbg.txt
+      - name: "Check for changes"
+        id: "diff"
+        run: |
+          git add -- cedict_1_0_ts_utf-8_mdbg.txt
+          echo "::set-output name=changed::$(git diff --cached --exit-code -- cedict_1_0_ts_utf-8_mdbg.txt)"
+      - name: "Commit"
+        if: "steps.diff.outputs.changed"
         run: |
           RELEASE_DATE="$(awk 'match($0, "^^#! date=(.+)$", m) {print m[1];exit}' cedict_1_0_ts_utf-8_mdbg.txt)"
-          echo ${RELEASE_DATE}
-          git add -- cedict_1_0_ts_utf-8_mdbg.txt
           git commit -m "CC-CEDICT ${RELEASE_DATE}"
       - name: Push
+        if: "steps.diff.outputs.changed"
         run: |
           git push

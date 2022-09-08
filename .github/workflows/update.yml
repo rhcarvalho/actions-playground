@@ -30,8 +30,8 @@ jobs:
       - name: "Check for changes"
         id: "diff"
         run: |
-          git add -- cedict_1_0_ts_utf-8_mdbg.txt
           echo "::group::git diff"
+          git add -- cedict_1_0_ts_utf-8_mdbg.txt
           git diff --cached | head -100
           echo "::endgroup::"
           echo "::set-output name=changed::$(git diff --cached --quiet; echo $?)"

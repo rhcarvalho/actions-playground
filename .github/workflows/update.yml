@@ -31,14 +31,16 @@ jobs:
         id: "diff"
         run: |
           git add -- cedict_1_0_ts_utf-8_mdbg.txt
+          echo "::group::git diff"
           git diff --cached | head -100
+          echo "::endgroup::"
           echo "::set-output name=changed::$(git diff --cached --quiet; echo $?)"
       - name: "Commit"
-        if: "steps.diff.outputs.changed"
+        if: "fromJSON(steps.diff.outputs.changed)"
         run: |
           RELEASE_DATE="$(awk 'match($0, "^^#! date=(.+)$", m) {print m[1];exit}' cedict_1_0_ts_utf-8_mdbg.txt)"
           git commit -m "CC-CEDICT ${RELEASE_DATE}"
       - name: Push
-        if: "steps.diff.outputs.changed"
+        if: "fromJSON(steps.diff.outputs.changed)"
         run: |
           git push

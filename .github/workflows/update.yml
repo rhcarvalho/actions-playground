@@ -42,7 +42,7 @@ jobs:
         if: "fromJSON(steps.diff.outputs.changed)"
         with:
           go-version-file: "go.mod"
-          cache: true
+          # cache: true
           # cache-dependency-path: "go.sum"
       - name: "Test"
         if: "fromJSON(steps.diff.outputs.changed)"

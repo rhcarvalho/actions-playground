@@ -30,16 +30,24 @@ jobs:
       - name: "Check for changes"
         id: "diff"
         run: |
-          echo "::group::git diff"
           git add -- cedict_1_0_ts_utf-8_mdbg.txt
           git diff --cached | head -100
-          echo "::endgroup::"
           echo "::set-output name=changed::$(git diff --cached --quiet; echo $?)"
       - name: "Commit"
         if: "fromJSON(steps.diff.outputs.changed)"
         run: |
           RELEASE_DATE="$(awk 'match($0, "^^#! date=(.+)$", m) {print m[1];exit}' cedict_1_0_ts_utf-8_mdbg.txt)"
           git commit -m "CC-CEDICT ${RELEASE_DATE}"
+      - uses: "actions/setup-go@v3"
+        if: "fromJSON(steps.diff.outputs.changed)"
+        with:
+          go-version-file: "go.mod"
+          cache: true
+          cache-dependency-path: "go.sum"
+      - name: "Test"
+        if: "fromJSON(steps.diff.outputs.changed)"
+        # -count=1 disables the test runner cache to force (re-)execution
+        run: "go test -v -count=1"
       - name: Push
         if: "fromJSON(steps.diff.outputs.changed)"
         run: |

@@ -2,6 +2,12 @@ name: "Update CC-CEDICT"
 on:
   workflow_dispatch:
   push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/update.yml"
+      - "cedict_1_0_ts_utf-8_mdbg.txt"
+      - "*_test.go"
   schedule:
     - cron: "4/15 * * * *"
 permissions:

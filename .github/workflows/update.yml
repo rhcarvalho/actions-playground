@@ -31,6 +31,7 @@ jobs:
         id: "diff"
         run: |
           git add -- cedict_1_0_ts_utf-8_mdbg.txt
+          git diff --cached --stat
           echo "::set-output name=changed::$(git diff --cached --quiet; echo $?)"
       - name: "Commit"
         if: "fromJSON(steps.diff.outputs.changed)"
@@ -42,7 +43,7 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: true
-          cache-dependency-path: "go.sum"
+          # cache-dependency-path: "go.sum"
       - name: "Test"
         if: "fromJSON(steps.diff.outputs.changed)"
         # -count=1 disables the test runner cache to force (re-)execution

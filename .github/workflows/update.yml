@@ -31,7 +31,8 @@ jobs:
         id: "diff"
         run: |
           git add -- cedict_1_0_ts_utf-8_mdbg.txt
-          echo "::set-output name=changed::$(git diff --cached --exit-code -- cedict_1_0_ts_utf-8_mdbg.txt | head -100)"
+          git diff --cached | head -100
+          echo "::set-output name=changed::$(git diff --cached --quiet; echo $?)"
       - name: "Commit"
         if: "steps.diff.outputs.changed"
         run: |

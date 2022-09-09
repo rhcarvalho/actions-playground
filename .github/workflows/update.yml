@@ -8,8 +8,8 @@ on:
       - ".github/workflows/update.yml"
       - "cedict_1_0_ts_utf-8_mdbg.txt"
       - "*_test.go"
-  schedule:
-    - cron: "4/15 * * * *"
+  # schedule:
+  #   - cron: "4/15 * * * *"
 permissions:
   contents: "write"
 defaults:
